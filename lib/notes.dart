@@ -18,7 +18,6 @@ class _NotesPageState extends State<NotesPage> {
 
   String searchQuery = '';
 
-  // Map each category to a distinct color
   final Map<String, Color> categoryColors = {
     'General': Colors.grey,
     'Study': Colors.indigo,
@@ -36,9 +35,13 @@ class _NotesPageState extends State<NotesPage> {
     final prefs = await SharedPreferences.getInstance();
     final String? notesString = prefs.getString('notes');
     if (notesString != null) {
-      final List decoded = jsonDecode(notesString);
+      final List<dynamic> decoded = jsonDecode(notesString);
       setState(() {
-        notes = decoded.cast<Map<String, String>>();
+        notes = decoded
+            .map((note) => (note as Map).map(
+                  (key, value) => MapEntry(key.toString(), value.toString()),
+                ))
+            .toList();
       });
     }
   }
